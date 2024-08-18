@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using PlataformaEnLinea.Data;
 using PlataformaEnLinea.Models;
 
 namespace PlataformaEnLinea
@@ -50,7 +52,14 @@ namespace PlataformaEnLinea
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=InstructorAccount}/{action=Login}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<ApplicationDbContext>();
+                RoleConfig.Initialize(services, context).Wait();
+            }
 
             app.Run();
         }

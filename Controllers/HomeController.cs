@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PlataformaEnLinea.Models;
+using PlataformaEnLinea.ViewModels;
 using System.Diagnostics;
 
 namespace PlataformaEnLinea.Controllers
@@ -11,7 +13,7 @@ namespace PlataformaEnLinea.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-        }
+        } 
 
         public IActionResult Index()
         {
@@ -28,5 +30,9 @@ namespace PlataformaEnLinea.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+
+
     }
 }

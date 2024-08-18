@@ -16,6 +16,11 @@ namespace PlataformaEnLinea.Controllers
             this.userManager = userManager;
         }
 
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {

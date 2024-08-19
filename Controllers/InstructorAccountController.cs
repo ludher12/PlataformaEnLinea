@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PlataformaEnLinea.Models;
 using PlataformaEnLinea.ViewModels;
 
 namespace PlataformaEnLinea.Controllers
@@ -8,13 +9,19 @@ namespace PlataformaEnLinea.Controllers
     {
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly UserManager<IdentityUser> userManager;
+        private readonly ApplicationDbContext context;
 
-        public InstructorAccountController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+        public InstructorAccountController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, ApplicationDbContext context)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
+            this.context = context;
         }
 
+        public IActionResult Index()
+        {
+            return View();
+        }
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
@@ -56,6 +63,10 @@ namespace PlataformaEnLinea.Controllers
                 var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    var instructor = new Instructor { Name = model.Name, LastName = model.LastName, UserId = user.Id};
+                    context.Instructors.Add(instructor);
+                    await context.SaveChangesAsync();
+                    await userManager.AddToRoleAsync(user, "Instructor");
                     await signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToLocal(returnUrl);
                 }
@@ -73,7 +84,7 @@ namespace PlataformaEnLinea.Controllers
         public async Task<IActionResult> LogOut()
         {
             await signInManager.SignOutAsync();
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("Index", "Home");
         }
 
 
@@ -85,7 +96,7 @@ namespace PlataformaEnLinea.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction(nameof(InstructorAccountController.Index), "InstructorAccount");
             }
         }
 

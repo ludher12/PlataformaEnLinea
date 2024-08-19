@@ -34,15 +34,15 @@ namespace PlataformaEnLinea.Controllers
                     var user = await userManager.FindByEmailAsync(model.Email);
                     if (await userManager.IsInRoleAsync(user, "Admin"))
                     {
-                        return RedirectToAction("Index", "AdminAccount");
+                        return await RedirectToLocal(returnUrl, user);
                     }
                     else if (await userManager.IsInRoleAsync(user, "Student"))
                     {
-                        return RedirectToAction("Index", "StudentAccount");
+                        return await RedirectToLocal(returnUrl, user);
                     }
                     else if (await userManager.IsInRoleAsync(user, "Instructor"))
                     {
-                        return RedirectToAction("Index", "InstructorAccount");
+                        return await RedirectToLocal(returnUrl, user);
                     }
                 }
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
@@ -51,7 +51,7 @@ namespace PlataformaEnLinea.Controllers
             return View(model);
         }
 
-        private IActionResult RedirectToLocal(string returnUrl)
+        private async Task<IActionResult> RedirectToLocal(string returnUrl, IdentityUser user)
         {
             if (Url.IsLocalUrl(returnUrl))
             {
@@ -59,6 +59,18 @@ namespace PlataformaEnLinea.Controllers
             }
             else
             {
+                if (await userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    return RedirectToAction("Index", "AdminAccount");
+                }
+                else if (await userManager.IsInRoleAsync(user, "Student"))
+                {
+                    return RedirectToAction("Index", "StudentAccount");
+                }
+                else if (await userManager.IsInRoleAsync(user, "Instructor"))
+                {
+                    return RedirectToAction("Index", "InstructorAccount");
+                }
                 return RedirectToAction(nameof(HomeController.Index), "Home");
             }
         }

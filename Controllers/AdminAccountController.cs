@@ -79,7 +79,7 @@ namespace PlataformaEnLinea.Controllers
         public async Task<IActionResult> LogOut()
         {
             await signInManager.SignOutAsync();
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("Index", "Home");
         }
 
 
@@ -91,7 +91,7 @@ namespace PlataformaEnLinea.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction(nameof(AdminAccountController.Index), "AdminAccount");
             }
         }
     }
